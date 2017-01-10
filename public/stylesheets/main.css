@@ -1,0 +1,27 @@
+body {
+	width: 60%;
+	min-width: 640px;
+	font-size: 14px;
+	font-family: "microsoft Yahei";
+	padding: 2px 50px;
+}
+pre {
+	background-color: #eee;
+	color: #c7254e;
+}
+h3 {
+	font-size: 24px;
+	margin: 0 0 10px;
+	padding: 0;
+}
+ul {
+	margin: 0;
+}
+li {
+	margin-bottom: 5px;
+	font-size: 14px;
+	color: #666;
+}
+li:last-child {
+	margin-bottom: 30px;
+}
