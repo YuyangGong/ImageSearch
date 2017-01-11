@@ -4,7 +4,7 @@ var express = require('express'),
 	query = require('./js/query.js'),
 	app = new express(),
 	port = process.env.PORT || 3000,
-	data_url = "mongodb://localhost:27017/my_database_name";//process.env.MONGO_URL;
+	data_url = process.env.MONGO_URL || "mongodb://localhost:27017/my_database_name";
 
 app.use(express.static(__dirname + '/public'));
 
