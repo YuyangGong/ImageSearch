@@ -1,7 +1,7 @@
 {
-  "name": "Timestamp Microservice",
-  "description": "A API for Timestamp Microservice",
-  "repository": "https://github.com/YuyangGong/TimestampMicroservice",
+  "name": "Image Search Abstraction Layer",
+  "description": "A API for Image Search",
+  "repository": "https://github.com/YuyangGong/ImageSearch",
   "logo": "",
   "keywords": ["node", "express", "API"],
   "image": ""
