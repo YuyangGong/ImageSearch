@@ -1,7 +1,10 @@
 var express = require('express'),
 	fs = require('fs'),
+	mongo = require('mongodb').MongoClient,
+	query = require('./js/query.js'),
 	app = new express(),
-	port = process.env.PORT || 3000;
+	port = process.env.PORT || 3000,
+	data_url = process.env.MONGO_URL;
 
 app.use(express.static(__dirname + '/public'));
 
@@ -14,13 +17,18 @@ app.get('/', function(req, res) {
 });
 
 app.get('/latest', function(req, res) {
-
+	query(null, 'http://cryptic-ridge-9197.herokuapp.com/api/latest/imagesearch/', function(data) {
+		res.json(data);
+	})
 });
 
 app.get('/search/:data', function(req, res) {
 	var data = req.params.data,
 		offset = req.query.offset;
-	console.log(data, offset);
+	url = `http://cryptic-ridge-9197.herokuapp.com/api/imagesearch/${encodeURI(data)}${offset ? '?offset=' + offset : ''}`;
+	query(null, url, function(data) {
+		res.json(data);
+	})
 })
 
 app.get('*', function(req, res) {
