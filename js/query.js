@@ -5,6 +5,7 @@ function query (err, url, callback) {
 	if(err) {
 		return console.log(err);
 	}
+	
 	var get = /^https/.test(url) ? https.get : http.get;
 
 	get(url, function(res) {

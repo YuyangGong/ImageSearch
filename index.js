@@ -4,7 +4,7 @@ var express = require('express'),
 	query = require('./js/query.js'),
 	app = new express(),
 	port = process.env.PORT || 3000,
-	data_url = process.env.MONGO_URL;
+	data_url = "mongodb://localhost:27017/my_database_name";//process.env.MONGO_URL;
 
 app.use(express.static(__dirname + '/public'));
 
@@ -17,18 +17,63 @@ app.get('/', function(req, res) {
 });
 
 app.get('/latest', function(req, res) {
-	query(null, 'http://cryptic-ridge-9197.herokuapp.com/api/latest/imagesearch/', function(data) {
-		res.json(data);
-	})
+	mongo.connect(data_url, function(err, db) {
+		if(err) {
+			return console.log(err);
+		}
+		var collection = db.collection('lastest');
+		collection.find().toArray(function(err, datas) {
+			if(err) {
+				return console.log(err);
+			}
+			if(datas.length && (Date.now() - datas[0].time) < 60*1000*60*24) {
+				res.json(datas[0].lastestData);
+				db.close();
+			}
+			else {
+				collection.remove();
+				query(null, 'https://cryptic-ridge-9197.herokuapp.com/api/latest/imagesearch/', function(data) {
+					collection.insert({"lastestData": data, "time": Date.now()}, function(err, theData) {
+						if(err) {
+							return console.log(err);
+						}
+						res.json(data);
+						db.close();
+					});
+				});				
+			}
+		});
+	});
 });
 
 app.get('/search/:data', function(req, res) {
 	var data = req.params.data,
-		offset = req.query.offset;
-	url = `http://cryptic-ridge-9197.herokuapp.com/api/imagesearch/${encodeURI(data)}${offset ? '?offset=' + offset : ''}`;
-	query(null, url, function(data) {
-		res.json(data);
-	})
+		offset = req.query.offset || 0,
+		url;
+	mongo.connect(data_url, function(err, db) {
+		if(err) {
+			return console.log(err);
+		}
+		var collection = db.collection('pic');
+		collection.find({search: data, offset: offset}).toArray(function(err, arr) {
+			if(err) {
+				return console.log(err);
+			}
+			if(arr.length) {
+				res.json(arr[0].pictures);
+				db.close();
+			}
+			else {
+				url = `https://cryptic-ridge-9197.herokuapp.com/api/imagesearch/${encodeURI(data)}${offset ? '?offset=' + offset : ''}`;
+				query(null, url, function(picData) {
+					res.json(picData);
+					collection.insert({search: data, offset: offset, pictures: picData}, function(err, datas) {
+						db.close();
+					})
+				});
+			}
+		});
+	});
 })
 
 app.get('*', function(req, res) {
