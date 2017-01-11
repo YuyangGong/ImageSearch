@@ -5,6 +5,9 @@ var express = require('express'),
 	app = new express(),
 	port = process.env.PORT || 3000,
 	data_url = process.env.MONGO_URL || "mongodb://localhost:27017/my_database_name";
+console.log('-----------------warning---------------');
+console.log('database url:' + data_url);
+console.log('-----------------warning---------------');
 
 app.use(express.static(__dirname + '/public'));
 
